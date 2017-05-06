@@ -1,7 +1,7 @@
 function pc = probchoice(n,betatemp,X,C)
-Xt = X(C(n,2:17),2:end)';
-p1 = exp(betatemp * Xt(:,16));
-p2 = sum(exp(betatemp * Xt(:,1:15)),2);
+Xt = X(C(n,2:19),2:end)'; % dim:2*18
+p1 = prod(exp(betatemp * Xt(:,16:18)),2); % three times of choices
+p2 = (sum(exp(betatemp * Xt(:,1:15)),2)).^3; 
 pc = (p1 ./ p2)';
 end
 % 
