@@ -1,0 +1,27 @@
+function [Z,BL,TOP] = model(N,K,X,C,Y,thetaL,betaL,p0)
+% convert struct to matrix
+beta = zeros(K,2);
+for k = 1:K
+    beta(k,:) = [betaL(k).p,betaL(k).r];
+end
+
+% get user labels
+% label indicators, Z(n,k) = 0 or 1
+Z = zeros(N,K);
+for k = 1:K
+    Z(:,k) = problabel(Y,thetaL(k),p0) > 0.5;
+end
+
+% get user preferences and top 3 choices
+BL = zeros(N,2);
+TOP = zeros(N,3);
+for n = 1:N
+    if sum(Z(n,:)) > 0
+        BL(n,:) = Z(n,:) ./ sum(Z(n,:),2) * beta;
+    else
+        BL(n,:) = rand(1,2);
+    end
+    % return top 3 choices
+    TOP(n,:) = makechoice(BL(n,:),X,C(n,2:16));
+end
+end
