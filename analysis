@@ -5,7 +5,7 @@ clear; close all; clc;
 
 %% Simulation - generate X,Y
 % choice set: X(m,:) = [id,1/price,rate]
-M = 100;
+M = 1000;
 X = zeros(M,3);
 % id
 X(:,1) = 1:M;
