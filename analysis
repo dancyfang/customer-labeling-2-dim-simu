@@ -52,7 +52,7 @@ betaL(2).p = 0.1;
 betaL(2).r = 0.9;
 
 % set choice set
-C = zeros(N,17);
+C = zeros(N,19);
 for n = 1:N
     C(n,1) = n;
     C(n,2:16) = randsample(M,15);
@@ -61,7 +61,7 @@ end
 % get user labels, preferences, and top 3 choices according to the model
 [Z,BL,TOP] = model(N,K,X,C,Y,thetaL,betaL,p0);
 % get the best choice
-C(:,17) = TOP(:,1);
+C(:,17:19) = TOP;
 
 %% Define Sampling Parameters
 % hyper parameter, number of labels
@@ -111,6 +111,7 @@ PC0 = zeros(N,2^K);
 % AA(1,:) which means "having none of the labels"
 betatemp0 = ComputeBetatemp(AA(2:end,:),K,beta0);
 
+% betatemp: matrix of 2^K * dim of beta
 for n = 1:N
     b0 = rand(1,2);
     betatemp = cat(1,b0,betatemp0);
@@ -188,7 +189,11 @@ for r = 1:R
     % calculate model accuracy
     if r > 900
         [~,~,TOPS] = model(N,K,X,C,Y,theta0,beta0,p0);
-        acc(r - 900) = sum(ismember(C(:,17),TOPS)) / N;
+        acctemp = 0;
+        for n = 1:N
+            acctemp = acctemp + sum(ismember(C(n,17:19),TOPS(n,:)));
+        end
+        acc(r - 900) = acctemp / (3 * N);
     end
 %     % test convergence
 %     len = 5000;
@@ -251,12 +256,7 @@ for r = 1:R
 %     end
         
 end
-%%
-acc = zeros(R,1);
-for r = 1:R
-    [~,~,TOPS] = model(N,K,X,C,Y,theta(r,:),beta(r,:),p0);
-    acc(r) = sum(ismember(C(:,17),TOPS)) / N;
-end 
+
 %% Plot Accuracy
 plot(1:100,acc);
 axis([0 100 0 1]);
